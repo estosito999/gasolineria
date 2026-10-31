@@ -745,7 +745,7 @@ def grafico_replicas(resultados):
 
             mode="lines+markers",
 
-            name="Espera media",
+            name="Tiempo medio de espera en cola",
 
             customdata=resultados[
                 [
@@ -757,7 +757,7 @@ def grafico_replicas(resultados):
 
             hovertemplate=(
                 "<b>Réplica %{x}</b>"
-                "<br>Espera media: %{y:.2f} min"
+                "<br>Tiempo medio de espera en cola: %{y:.2f} min"
                 "<br>Semilla: %{customdata[0]}"
                 "<br>Cola máxima: %{customdata[1]}"
                 "<br>Espera máxima: %{customdata[2]:.2f}"
@@ -784,13 +784,247 @@ def grafico_replicas(resultados):
 
     fig.update_layout(
 
-        title="Comparación de las réplicas",
+        title="Tiempo medio de espera en cola por réplica",
 
         xaxis_title="Réplica",
 
-        yaxis_title="Espera media (min)",
+        yaxis_title="Tiempo medio de espera en cola (min)",
+
+        xaxis=dict(tickmode="linear", dtick=1),
 
         height=430
+    )
+
+
+    return fig
+
+# ============================================================
+# 8. LABORATORIO VISUAL DE INTERARRIBOS
+# ============================================================
+
+def grafico_laboratorio_interarribos(tabla_llegadas, ejemplo):
+
+    fig = make_subplots(
+
+        rows=2,
+
+        cols=1,
+
+        row_heights=[
+            0.45,
+            0.55
+        ],
+
+        vertical_spacing=0.18,
+
+        subplot_titles=(
+
+            "Probabilidad de cada tiempo de interarribo",
+
+            "Llegadas generadas en el tiempo"
+        )
+    )
+
+
+    # ========================================================
+    # GRÁFICO 1
+    # DISTRIBUCIÓN DE PROBABILIDAD
+    # ========================================================
+
+    fig.add_trace(
+
+        go.Bar(
+
+            x=tabla_llegadas["tiempo"],
+
+            y=tabla_llegadas["probabilidad"],
+
+            name="Probabilidad",
+
+            text=[
+                f"{p * 100:.0f}%"
+                for p in tabla_llegadas["probabilidad"]
+            ],
+
+            textposition="outside",
+
+            hovertemplate=(
+                "Interarribo: %{x} min"
+                "<br>Probabilidad: %{y:.2f}"
+                "<extra></extra>"
+            )
+        ),
+
+        row=1,
+
+        col=1
+    )
+
+
+    # ========================================================
+    # GRÁFICO 2
+    # LÍNEA TEMPORAL
+    # ========================================================
+
+    llegadas = ejemplo["llegada"].tolist()
+
+    vehiculos = ejemplo["vehiculo"].tolist()
+
+
+    fig.add_trace(
+
+        go.Scatter(
+
+            x=llegadas,
+
+            y=[0] * len(llegadas),
+
+            mode="markers+text",
+
+            text=[
+                f"V{v}"
+                for v in vehiculos
+            ],
+
+            textposition="top center",
+
+            marker=dict(
+                size=16
+            ),
+
+            name="Vehículos",
+
+            customdata=ejemplo[
+                [
+                    "u",
+                    "interarribo",
+                    "probabilidad"
+                ]
+            ],
+
+            hovertemplate=(
+                "<b>Vehículo %{text}</b>"
+                "<br>Llegada: %{x} min"
+                "<br>U: %{customdata[0]:.3f}"
+                "<br>Interarribo: %{customdata[1]} min"
+                "<br>Probabilidad: %{customdata[2]:.2f}"
+                "<extra></extra>"
+            )
+        ),
+
+        row=2,
+
+        col=1
+    )
+
+
+    # ========================================================
+    # MOSTRAR DISTANCIA ENTRE VEHÍCULOS
+    # ========================================================
+
+    llegada_anterior = 0
+
+
+    for _, fila in ejemplo.iterrows():
+
+        llegada_actual = fila["llegada"]
+
+        interarribo = fila["interarribo"]
+
+
+        punto_medio = (
+            llegada_anterior
+            +
+            llegada_actual
+        ) / 2
+
+
+        fig.add_annotation(
+
+            x=punto_medio,
+
+            y=-0.18,
+
+            text=f"{interarribo} min",
+
+            showarrow=False,
+
+            font=dict(
+                size=11
+            ),
+
+            row=2,
+
+            col=1
+        )
+
+
+        llegada_anterior = llegada_actual
+
+
+    # ========================================================
+    # CONFIGURACIÓN
+    # ========================================================
+
+    fig.update_xaxes(
+
+        title_text="Tiempo de interarribo (min)",
+
+        dtick=1,
+
+        row=1,
+
+        col=1
+    )
+
+
+    fig.update_yaxes(
+
+        title_text="Probabilidad",
+
+        range=[
+            0,
+            max(tabla_llegadas["probabilidad"]) + 0.1
+        ],
+
+        row=1,
+
+        col=1
+    )
+
+
+    fig.update_xaxes(
+
+        title_text="Tiempo simulado (min)",
+
+        row=2,
+
+        col=1
+    )
+
+
+    fig.update_yaxes(
+
+        visible=False,
+
+        range=[
+            -0.5,
+            0.5
+        ],
+
+        row=2,
+
+        col=1
+    )
+
+
+    fig.update_layout(
+
+        title="Del número aleatorio al tiempo de llegada",
+
+        height=700,
+
+        showlegend=False
     )
 
 

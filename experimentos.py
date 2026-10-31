@@ -9,6 +9,10 @@ from simulador import resumen_simulacion
 # ============================================================
 
 def ejecutar_replicas(n_replicas=5, n_clientes=100, semilla_base=2026):
+    """Ejecuta réplicas nuevas, cada una con el estado del simulador reiniciado.
+
+    El índice r empieza en 0; cada semilla es semilla_base + r * 1009.
+    """
 
     filas = []
 
@@ -35,6 +39,8 @@ def ejecutar_replicas(n_replicas=5, n_clientes=100, semilla_base=2026):
             "replica": r + 1,
 
             "semilla": semilla,
+
+            "n_clientes": n_clientes,
 
             "espera_media": resumen["espera_media"],
 

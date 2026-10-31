@@ -75,6 +75,8 @@ def exportar_replicas(df):
 
         "semilla",
 
+        "n_clientes",
+
         "espera_media",
 
         "espera_maxima",
