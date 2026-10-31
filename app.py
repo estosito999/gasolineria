@@ -21,8 +21,7 @@ from estadistica import replicas_requeridas
 
 from distribuciones import ajuste_poisson
 
-from visualizacion import grafico_timeline
-from visualizacion import grafico_replicas
+from visualizacion import *
 
 from exportacion import *
 
