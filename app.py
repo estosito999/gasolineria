@@ -14,8 +14,7 @@ from simulador import *
 
 from experimentos import ejecutar_replicas
 
-from estadistica import intervalo_confianza
-from estadistica import replicas_requeridas
+from estadistica import *
 
 from distribuciones import ajuste_poisson
 
