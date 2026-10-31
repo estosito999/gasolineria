@@ -10,9 +10,7 @@ from datos import resumen_datos
 
 from generador import transformar_uniforme
 
-from simulador import simular_gasolinera
-from simulador import estado_en_tiempo
-from simulador import resumen_simulacion
+from simulador import *
 
 from experimentos import ejecutar_replicas
 
